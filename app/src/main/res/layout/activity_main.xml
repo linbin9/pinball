@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.administrator.ballgame.MainActivity">
+
+
+    <AbsoluteLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/abso2"
+        android:layout_x="75dp"
+        android:layout_y="300dp">
+
+    </AbsoluteLayout>
+
+    <AbsoluteLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/abso3"
+        android:layout_x="140dp"
+        android:layout_y="300dp">
+
+    </AbsoluteLayout>
+
+    <AbsoluteLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/abso4"
+        android:layout_x="140dp"
+        android:layout_y="235dp">
+
+    </AbsoluteLayout>
+
+    <AbsoluteLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/abso1"
+        android:layout_x="205dp"
+        android:layout_y="300dp">
+
+    </AbsoluteLayout>
+
+</AbsoluteLayout>
