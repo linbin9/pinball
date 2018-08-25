@@ -11,6 +11,24 @@
     tools:context="com.example.administrator.ballgame.MainActivity">
 
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bn3"
+        android:text="再来"
+        android:visibility="invisible"
+        android:layout_x="122dp"
+        android:layout_y="106dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bn4"
+        android:visibility="invisible"
+        android:layout_x="122dp"
+        android:layout_y="174dp"
+        android:text="返回" />
+
     <AbsoluteLayout
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -46,5 +64,7 @@
         android:layout_y="300dp">
 
     </AbsoluteLayout>
+
+
 
 </AbsoluteLayout>

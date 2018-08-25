@@ -2,6 +2,7 @@ package com.example.administrator.ballgame;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,10 +19,13 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AbsoluteLayout;
+import android.widget.Button;
 
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.view.View.VISIBLE;
 
 
 public class MainActivity extends Activity
@@ -39,7 +43,7 @@ public class MainActivity extends Activity
     public final int BALL_SIZE = 16;
     // 小球纵向的运行速度
     public int ySpeed = 15;
-    Random rand = new Random();
+    Random rand = new Random(System.currentTimeMillis());
     // 返回一个-0.5~0.5的比率，用于控制小球的运行方向
     public double xyRate = rand.nextDouble() - 0.5;
     // 小球横向的运行速度
@@ -52,12 +56,8 @@ public class MainActivity extends Activity
     // 游戏是否结束的旗标
     public boolean isLose = false;
 
-    public void setRacketX(int x){racketX = x;}
-    public int getRacketX(){return racketX;}
+    private Button b3,b4;
 
-    public int getTableWidth(){return tableHeight;}
-
-    public int getRACKET_WIDTH(){return RACKET_WIDTH;}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,12 +68,17 @@ public class MainActivity extends Activity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        Intent intent = getIntent();
+        int level=intent.getIntExtra("level", 0);
+        ySpeed += (level-1)/2*ySpeed;
+        xSpeed += (level-1)/2*xSpeed;
         // 创建GameView组件
         final GameView gameView = new GameView(this);
         final Direction_right right = new Direction_right(this);
         final Direction_left left = new Direction_left(this);
         final Direction_down down = new Direction_down(this);
         final Direction_up up = new Direction_up(this);
+
         setContentView(R.layout.activity_main);
         AbsoluteLayout absoluteLayout = (AbsoluteLayout) findViewById(R.id.activity_main);
         AbsoluteLayout absoluteLayout1 = (AbsoluteLayout) findViewById(R.id.abso1);
@@ -81,6 +86,8 @@ public class MainActivity extends Activity
         AbsoluteLayout absoluteLayout3 = (AbsoluteLayout) findViewById(R.id.abso3);
         AbsoluteLayout absoluteLayout4 = (AbsoluteLayout) findViewById(R.id.abso4);
 
+        b3 = (Button) findViewById(R.id.bn3);
+        b4 = (Button) findViewById(R.id.bn4);
 
         absoluteLayout1.addView(right);
         absoluteLayout2.addView(left);
@@ -88,7 +95,6 @@ public class MainActivity extends Activity
         absoluteLayout4.addView(up);
 
         absoluteLayout.addView(gameView);
-
 
         // 获取窗口管理器
         WindowManager windowManager = getWindowManager();
@@ -98,54 +104,76 @@ public class MainActivity extends Activity
         // 获得屏幕宽和高
         tableWidth = metrics.widthPixels;
         tableHeight = metrics.heightPixels;
-        racketY = tableHeight - 80;
+        racketY = tableHeight - 100;
         right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e("touch","1");
-                if (racketX < tableWidth - RACKET_WIDTH) racketX += 45;
-                else racketX = tableWidth - RACKET_WIDTH;
+                if (racketX < tableWidth - RACKET_WIDTH - 60 - 45) racketX += 45;
+                else racketX = tableWidth - RACKET_WIDTH -60;
             }
         });
         left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (racketX > 0) racketX -= 45;
-                else racketX = 0;
+                if (racketX > 65) racketX -= 45;
+                else racketX = 20;
             }
         });
         down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (racketY < tableHeight - RACKET_HEIGHT) racketY += 20;
-                else racketY = tableHeight - RACKET_HEIGHT;
+                if (racketY < tableHeight - RACKET_HEIGHT - 60) racketY += 20;
+                else racketY = tableHeight - RACKET_HEIGHT - 60;
             }
         });
         up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (racketY > 0) racketY -= 20;
-                else racketY = 0;
+                if (racketY > 40) racketY -= 20;
+                else racketY = 20;
             }
         });
         final Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 if (msg.what == 0x123) {
                     gameView.invalidate();
+                    if(isLose){
+                        b3 = (Button) findViewById(R.id.bn3);
+                        b4 = (Button) findViewById(R.id.bn4);
+                        b3.setVisibility(VISIBLE);
+                        b4.setVisibility(VISIBLE);
+                    }
                 }
             }
         };
+        b3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+        });
+        b4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+                startActivity(intent);
+                MainActivity.this.finish();
+            }
+        });
         final Timer timer = new Timer();
         timer.schedule(new TimerTask() // ①
         {
             @Override
             public void run() {
                 // 如果小球碰到左边边框
-                if (ballX <= 0 || ballX >= tableWidth - BALL_SIZE) {
+                if (ballX <= 20 || ballX >= tableWidth - BALL_SIZE - 60) {
                     xSpeed = -xSpeed;
                 }
-                // 如果小球高度超出了球拍位置，且横向不在球拍范围之内，游戏结束
-                if (ballY >= racketY - BALL_SIZE
+                // 如果小球高度超出了屏幕位置，且横向不在球拍范围之内，游戏结束
+                if (ballY >= tableHeight - BALL_SIZE - 60
                         && (ballX < racketX || ballX > racketX
                         + RACKET_WIDTH)) {
                     timer.cancel();
@@ -153,7 +181,7 @@ public class MainActivity extends Activity
                     isLose = true;
                 }
                 // 如果小球位于球拍之内，且到达球拍位置，小球反弹
-                else if (ballY <= 0
+                else if (ballY <= 15
                         || (ballY >= racketY - BALL_SIZE
                         && ballX > racketX && ballX <= racketX
                         + RACKET_WIDTH)) {
@@ -186,7 +214,7 @@ public class MainActivity extends Activity
             {
                 paint.setColor(Color.RED);
                 paint.setTextSize(40);
-                canvas.drawText("游戏已结束", tableWidth / 2 - 100, 200, paint);
+                canvas.drawText("游戏已结束", tableWidth / 2 - 100 - 50 , 200, paint);
             }
             // 如果游戏还未结束
             else
